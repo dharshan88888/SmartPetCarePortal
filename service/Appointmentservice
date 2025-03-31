@@ -1,0 +1,77 @@
+package com.examly.springapp.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import com.examly.springapp.entity.Appointment;
+
+import com.examly.springapp.repository.AppointmentRepository;
+
+@Service
+public class AppointmentService {
+    @Autowired
+    AppointmentRepository asobj;
+    public Appointment addAppointment(Appointment a)
+    {
+        return asobj.save(a);
+    }
+    public List<Appointment>addAllAppointments(List<Appointment>a)
+    {
+        return asobj.saveAll(a);
+    }
+    public Appointment getAppointment(int id)
+    {
+        return asobj.findById(id).orElse(null);
+    }
+    public List<Appointment>getAllAppointment()
+    {  
+        return asobj.findAll();
+    }
+    public List<Appointment> sort(String field) {
+        Sort sort = Sort.by(Sort.Direction.ASC, field);
+        return asobj.findAll(sort);
+    }
+
+    public List<Appointment> page(int pagesize, int pageno) {
+        Pageable pageable = PageRequest.of(pageno, pagesize);
+        return asobj.findAll(pageable).getContent();
+    }
+    public List<Appointment> pagesort(int pageSize,int pageNumber,String field)
+    {
+        return asobj.findAll(PageRequest.of(pageNumber, pageSize).
+        withSort(Sort.by(Sort.Direction.ASC,field))).getContent();
+    }
+
+    public Appointment editAppointment(int id, Appointment a)
+    {
+        Appointment app=asobj.findById(id).orElse(null);
+        if(app!=null)
+        {
+            app.setId(a.getId());
+            app.setName(a.getName());
+            app.setSpecialization(a.getSpecialization());
+            app.setExperience(a.getExperience());
+            app.setAvail(a.isAvail());
+            return asobj.save(app);
+        }
+        else
+        {
+            return null;
+        }
+
+    }
+    public boolean delAppointment(int id)
+    {
+        if(asobj.existsById(id))
+        {
+            asobj.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+}

@@ -1,0 +1,37 @@
+package com.examly.springapp.repository;
+
+import java.util.List;
+
+import javax.transaction.Transactional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import com.examly.springapp.entity.Shelter;
+
+public interface ShelterRepository extends JpaRepository<Shelter,Integer>{
+    @Query("SELECT s FROM Shelter s")
+    List<Shelter> getAllShelters();
+
+    @Query("SELECT s FROM Shelter s WHERE s.name = :name")
+    Shelter findByName(@Param("name") String name);
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO shelter (id, name, address, phone_no, email) VALUES (?1, ?2, ?3, ?4, ?5)", nativeQuery = true)
+    void insertShelter(int id, String name, String address, String phoneNo, String email);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Shelter s SET s.name = ?2, s.address = ?3, s.phoneNo = ?4, s.email = ?5 WHERE s.id = ?1")
+    int editShelter(int id, String name, String address, String phoneNo, String email);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Shelter s WHERE s.id = ?1")
+    int delShelter(int id);
+
+}
+

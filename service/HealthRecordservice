@@ -1,0 +1,86 @@
+package com.examly.springapp.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import com.examly.springapp.entity.HealthRecord;
+import com.examly.springapp.repository.HealthRecordRepository;
+
+@Service
+public class HealthRecordService
+{
+   @Autowired
+   HealthRecordRepository HRobj;
+   public HealthRecord addRecord(HealthRecord a)
+   {
+      return HRobj.save(a);
+   }
+   public List<HealthRecord>addhealthlist(List<HealthRecord>addhealth)
+   {
+    return HRobj.saveAll(addhealth);
+   }
+   public HealthRecord getRecord(int id)
+   {
+    return HRobj.findById(id).orElse(null);
+   }
+  public List<HealthRecord> sort(String field)
+    {
+        Sort sort=Sort.by(Sort.Direction.ASC,field);
+        return HRobj.findAll(sort);
+    }
+ 
+
+    public List<HealthRecord> page(int pageSize,int pageNumber)
+    {
+        org.springframework.data.domain.Pageable page=PageRequest.of(pageNumber, pageSize);
+        return HRobj.findAll(page).getContent();
+    }
+   
+    public List<HealthRecord> pagesort(int pageSize,int pageNumber,String field)
+    {
+        return HRobj.findAll(PageRequest.of(pageNumber, pageSize).
+        withSort(Sort.by(Sort.Direction.ASC,field))).getContent();
+    }
+
+    public HealthRecord getHealthRecord(int id)
+    {
+        return HRobj.findById(id).orElse(null);
+    }
+
+    public List<HealthRecord>getAllHealthRecords()
+    {
+        return HRobj.findAll();
+    }
+
+
+   public HealthRecord editRecord(int id,HealthRecord updatRecord)
+   {
+    HealthRecord existRec=HRobj.findById(id).orElse(null);
+    if(existRec!=null)
+    {
+        existRec.setId(updatRecord.getId());
+        existRec.setDate(updatRecord.getDate());
+        existRec.setHealthCondition(updatRecord.getHealthCondition());
+        existRec.setTreatment(updatRecord.getTreatment());
+        return HRobj.save(existRec);
+    }
+    else{
+        return null;
+    }
+   }
+
+   
+  public boolean delRec(int id)
+  {
+    if(HRobj.existsById(id)){
+        HRobj.deleteById(id);
+        return true;
+    }
+    return false;
+  }
+}

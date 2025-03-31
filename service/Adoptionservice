@@ -1,0 +1,75 @@
+package com.examly.springapp.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
+import com.examly.springapp.entity.Adoption;
+import com.examly.springapp.repository.AdoptionRepository;
+
+@Service
+public class AdoptionService {
+    @Autowired
+  AdoptionRepository obj;
+  public Adoption addAdoption(Adoption a)
+  {
+    return obj.save(a);
+  }
+  public List<Adoption>addAdoptionList(List<Adoption>adoplist)
+  {
+    return obj.saveAll(adoplist);
+  }
+  public List<Adoption> sort(String field)
+    {
+        Sort sort=Sort.by(Sort.Direction.ASC,field);
+        return obj.findAll(sort);
+    }
+
+    public List<Adoption> page(int pageSize,int pageNumber)
+    {
+        Pageable page=PageRequest.of(pageNumber, pageSize);
+        return obj.findAll(page).getContent();
+    }
+   
+    public List<Adoption> pagesort(int pageSize,int pageNumber,String field)
+    {
+        return obj.findAll(PageRequest.of(pageNumber, pageSize).
+        withSort(Sort.by(Sort.Direction.ASC,field))).getContent();
+    }
+
+    public List<Adoption>getAllAdoption()
+    {
+      return obj.findAll();
+    }
+  public Adoption getAdoption(int id)
+  {
+    return obj.findById(id).orElse(null);
+  }
+  public Adoption editAdoption(int id,Adoption updateAdop)
+  {
+    Adoption adop=obj.findById(id).orElse(null);
+    if(adop!=null)
+    {
+       adop.setId(updateAdop.getId());
+       adop.setPetid(updateAdop.getPetid());
+       adop.setStatus(updateAdop.getStatus());
+       adop.setUserid(updateAdop.getUserid());
+       return obj.save(adop);
+    }
+    else{
+        return null;
+    }
+  }
+  public boolean delAdoption(int id)
+  {
+    if(obj.existsById(id))
+    {
+        obj.deleteById(id);
+        return true; 
+    }
+    return false;
+  }
+}

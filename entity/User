@@ -1,0 +1,134 @@
+package com.examly.springapp.entity;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
+
+import com.examly.springapp.repository.PetSitterRepository;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+@Entity
+
+public class User {
+  @Id
+  int id;
+  String username;
+  String email;
+  @Transient
+  String password;
+  String roles;
+  String adop;
+  String review;
+  
+  @OneToOne(cascade =  CascadeType.ALL)
+  @JoinColumn(name="petsitter_id",referencedColumnName = "id")
+  private PetSitter petsitter;
+   
+  public void setPetSitter(PetSitter petsitter)
+  {
+    this.petsitter=petsitter;
+  }
+  public PetSitter getPetSitter()
+  {
+    return petsitter;
+  }
+  
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name="appoint_id",referencedColumnName = "id")
+  private Appointment appointment;
+ 
+  public void setAppointment(Appointment appointment)
+  {
+    this.appointment=appointment;
+  }
+  public Appointment getAppointment()
+  {
+    return appointment;
+  }
+  @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+  @JsonManagedReference("user-pet")
+  List<Pet>spet=new ArrayList<>();
+  public List<Pet> getSpets()
+  {
+    return spet;
+  }
+  public void setSpets(List<Pet>pets)
+  {
+    for(Pet add:pets)
+    {
+        add.setUser(this);
+    }
+    this.spet.addAll(pets);
+  }
+  public int getId() {
+    return id;
+  }
+  public void setId(int id) {
+    this.id = id;
+  }
+  public String getUsername() {
+    return username;
+  }
+  public void setUsername(String username) {
+    this.username = username;
+  }
+  public String getEmail() {
+    return email;
+  }
+  public void setEmail(String email) {
+    this.email = email;
+  }
+  public String getPassword() {
+    return password;
+  }
+  public void setPassword(String password) {
+    this.password = password;
+  }
+  public String getRoles() {
+    return roles;
+  }
+  public void setRoles(String roles) {
+    this.roles = roles;
+  }
+  public String getAdop() {
+    return adop;
+  }
+  public void setAdop(String adop) {
+    this.adop = adop;
+  }
+  public String getReview() {
+    return review;
+  }
+  public void setReview(String review) {
+    this.review = review;
+  }
+ 
+  public User(int id, String username, String email, String password, String roles, String adop, String review,List<Pet>spet,PetSitter petsitter,Appointment appointment) {
+    this.id = id;
+    this.username = username;
+    this.email = email;
+    this.password = password;
+    this.roles = roles;
+    this.adop = adop;
+    this.review = review;
+    this.spet=spet;
+    this.petsitter=petsitter;
+    this.appointment=appointment;
+  }
+  public User() {
+  }
+    
+    
+}

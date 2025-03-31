@@ -1,0 +1,164 @@
+package com.examly.springapp.entity;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
+
+import org.hibernate.boot.model.source.internal.hbm.Helper;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+@Entity
+public class Pet{
+    @Id
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    int id;
+    @JsonIgnore
+    String name;
+    @Transient
+    String species;
+    String breed ;
+    String age;
+    String healthSt;
+    String temp;
+    String adopStatus;
+
+   
+    String Review;
+
+    @ManyToOne
+    @JoinColumn(name="user_id")
+    @JsonBackReference("user-pet")
+    private User user;
+ 
+    @ManyToOne
+    @JoinColumn(name="shelter_id")
+    @JsonBackReference("shelter-pet")
+    private Shelter shelter;
+   
+    public void setShelter(Shelter shelter)
+    {
+        this.shelter=shelter;
+    }
+    public Shelter getShelter()
+    {
+        return shelter;
+    }
+    @OneToMany(cascade = CascadeType.ALL)
+    @JsonManagedReference("pet-health")
+    List<HealthRecord>healthRecords=new ArrayList<>();
+    public void setHealthRecord(List<HealthRecord>hr)
+    {
+        for(HealthRecord hrs:hr)
+        {
+             hrs.setPet(this);
+        }
+        this.healthRecords.addAll(hr);
+    }
+    public List<HealthRecord> getHealthRecord()
+    {
+        return healthRecords;
+    }
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getSpecies() {
+        return species;
+    }
+    public void setSpecies(String species) {
+        this.species = species;
+    }
+    public String getBreed() {
+        return breed;
+    }
+    public void setBreed(String breed) {
+        this.breed = breed;
+    }
+    public String getAge() {
+        return age;
+    }
+    public void setAge(String age) {
+        this.age = age;
+    }
+    public String getHealthSt() {
+        return healthSt;
+    }
+    public void setHealthSt(String healthSt) {
+        this.healthSt = healthSt;
+    }
+    public String getTemp() {
+        return temp;
+    }
+    public void setTemp(String temp) {
+        this.temp = temp;
+    }
+    public String getAdopStatus() {
+        return adopStatus;
+    }
+    public void setAdopStatus(String adopStatus) {
+        this.adopStatus = adopStatus;
+    }
+   
+    
+    public String getReview() {
+        return Review;
+    }
+    public void setReview(String review) {
+       Review = review;
+    }
+   
+
+     public void setUser(User user)
+     {
+        this. user=user;
+     }
+     public User getUser()
+     {
+        return user;
+     }
+     
+    public Pet(int id, String name, String species, String breed, String age, String healthSt, String temp,
+            String adopStatus, String review,Shelter shelter,User user,List<HealthRecord>healthRecords) {
+        this.id = id;
+        this.name = name;
+        this.species = species;
+        this.breed = breed;
+        this.age = age;
+        this.healthSt = healthSt;
+        this.temp = temp;
+        this.adopStatus = adopStatus;
+        Review = review;
+     this.healthRecords=healthRecords;
+        this.shelter=shelter;
+        this.user=user;
+    }
+    public Pet() {
+    }
+    
+    
+}

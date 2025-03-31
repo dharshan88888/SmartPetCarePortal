@@ -1,0 +1,45 @@
+package com.examly.springapp.repository;
+
+import java.util.List;
+
+
+import javax.transaction.Transactional;
+
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import com.examly.springapp.entity.Pet;
+
+
+
+@Repository
+public interface PetRepository extends JpaRepository<Pet,Integer>{
+    @Query("SELECT p FROM Pet p WHERE p.id = :id")
+    Pet getPet(@Param("id") int id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO pet (name, breed, age, health_st, temp, adop_status, review) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)", nativeQuery = true)
+    void addPet(String name, String breed, String age, String healthSt, String temp, String adopStatus, String shelter, String review);
+   
+    @Modifying
+@Transactional
+@Query(value = "UPDATE pet SET name = :name, breed = :breed, age = :age, health_st = :healthSt, temp = :temp, adop_status = :adopStatus, review_id = :review WHERE id = :id", nativeQuery = true)
+void updatePet(@Param("id") Long id, 
+               @Param("name") String name, 
+               @Param("breed") String breed, 
+               @Param("age") int age, 
+               @Param("healthSt") String healthSt, 
+               @Param("temp") String temp, 
+               @Param("adopStatus") String adopStatus, 
+               @Param("review") Long reviewId);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Pet p WHERE p.id = ?1")
+    int delPet(int id);
+} 

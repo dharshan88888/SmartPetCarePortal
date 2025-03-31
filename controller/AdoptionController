@@ -1,0 +1,92 @@
+package com.examly.springapp.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import org.springframework.web.bind.annotation.RestController;
+
+import com.examly.springapp.entity.Adoption;
+
+import com.examly.springapp.service.AdoptionService;
+
+@RestController
+public class AdoptionController {
+ @Autowired
+ AdoptionService ob;
+ @PostMapping("/adopost")
+ public ResponseEntity<Adoption>addAdoption(@RequestBody Adoption a)
+ {
+    return new ResponseEntity<>(ob.addAdoption(a),HttpStatus.CREATED);
+ }
+@PostMapping("/adoptionlist")
+public ResponseEntity<List<Adoption>>addAdoptionList(@RequestBody List<Adoption>adoplist)
+{
+    List<Adoption>adop=ob.addAdoptionList(adoplist);
+    return new ResponseEntity<>(adop,HttpStatus.CREATED);
+}
+ @GetMapping("/getbyadopid/{id}")
+ public ResponseEntity<Adoption>getAdoption(@PathVariable int id)
+ {
+    Adoption adop= ob.getAdoption(id);
+    if(adop!=null)
+    {
+        return new ResponseEntity<>(adop,HttpStatus.OK);
+    }
+    else{
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+ }
+
+  @GetMapping("/sort/Adoption/{field}")
+    public ResponseEntity<List<Adoption>> sortShelter(@PathVariable String field) {
+        List<Adoption> sortedShelter = ob.sort(field);
+        return new ResponseEntity<>(sortedShelter, HttpStatus.OK);
+    }
+
+    @GetMapping("/page/Shelter/{pageno}/{pagesize}")
+    public ResponseEntity<List<Adoption>> getShelterPaginated(@PathVariable int pageno, @PathVariable int pagesize) {
+        List<Adoption> paginatedShelter = ob.page(pagesize, pageno);
+        return new ResponseEntity<>(paginatedShelter, HttpStatus.OK);
+    }
+
+    @GetMapping("/page/Shelter/{pageno}/{pagesize}/sort/{field}")
+    public ResponseEntity<List<Adoption>> getShelterPaginatedSorted(@PathVariable int pageno, @PathVariable int pagesize, @PathVariable String field) {
+        List<Adoption> sortedPaginatedShelter = ob.pagesort(pagesize, pageno, field);
+        return new ResponseEntity<>(sortedPaginatedShelter, HttpStatus.OK);
+    }
+
+ @PutMapping("/putbyadopid/{id}")
+ public ResponseEntity<Adoption>editAdoption(@PathVariable int id,@RequestBody Adoption updateAdop)
+ {
+    Adoption adop=ob.editAdoption(id, updateAdop);
+    if(adop!=null)
+    {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    else{
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+ }
+ @DeleteMapping("/deletebyadopid/{id}")
+ public ResponseEntity<Void>delAdoption(@PathVariable int id)
+ {
+    boolean isDel=ob.delAdoption(id);
+    if(isDel)
+    {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    else{
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+    }
+ }
+}

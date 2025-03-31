@@ -1,0 +1,67 @@
+package com.examly.springapp.controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.examly.springapp.entity.PetSitter;
+import com.examly.springapp.entity.Shelter;
+import com.examly.springapp.service.PetsitterService;
+
+@RestController
+public class PetsitterController {
+ 
+    @Autowired
+    PetsitterService ob;
+    @PostMapping("/post/petsitter")
+    public ResponseEntity<PetSitter> addPetSitter(@RequestBody PetSitter a)
+    {
+        return new ResponseEntity<>(ob.addSitter(a),HttpStatus.OK);
+    }
+
+    @GetMapping("/getbyid/Petsitter/{id}")
+    public ResponseEntity<PetSitter>getPetSitter(@PathVariable int id)
+    {
+      PetSitter ps=ob.getPetSitter(id);
+      if(ps!=null)
+      {
+        return new ResponseEntity<>(ps,HttpStatus.OK);
+      }
+      else{
+        return new ResponseEntity<>(ps,HttpStatus.NOT_FOUND);
+      }
+    }
+    
+
+    @PutMapping("/put/Petsitter/{id}")
+    public ResponseEntity<PetSitter>editPetSitter(@PathVariable int id,@RequestBody PetSitter updatedPetSitter)
+    {
+        PetSitter psp=ob.editPetSitter(id,updatedPetSitter);
+        if(psp!=null)
+        {
+            return new ResponseEntity<>(psp,HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+   
+    @DeleteMapping("/deletebyid/Petsitter/{id}")
+    public ResponseEntity<Void>delPetSitter(@PathVariable int id)
+    {
+       boolean isDel=ob.delPetSitter(id);
+       if(isDel)
+       {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+       }
+       else{
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+       }
+    }
+}

@@ -1,0 +1,79 @@
+package com.examly.springapp.entity;
+
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
+import javax.transaction.TransactionScoped;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+
+@Entity
+public class HealthRecord
+{
+    @Id
+    int id;
+    String healthCondition;
+    String treatment;
+    String date;
+    
+    @ManyToOne
+    @JoinColumn(name="pet_id")
+    @JsonBackReference("pet-health")
+    private Pet pet;
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getHealthCondition() {
+        return healthCondition;
+    }
+    public void setHealthCondition(String healthCondition) {
+        this.healthCondition = healthCondition;
+    }
+    public String getTreatment() {
+        return treatment;
+    }
+    public void setTreatment(String treatment) {
+        this.treatment = treatment;
+    }
+    public String getDate() {
+        return date;
+    }
+    public void setDate(String date) {
+        this.date = date;
+    }
+   public void setPet(Pet pet)
+   {
+    this.pet=pet;
+   }
+   public Pet getPet()
+   {
+    return pet;
+   }
+   
+    public HealthRecord(int id, String healthCondition, String treatment, String date, Pet pet) {
+        this.id = id;
+        this.healthCondition = healthCondition;
+        this.treatment = treatment;
+        this.date = date;
+         this.pet = pet;
+        
+    }
+    public HealthRecord() {
+    }
+   
+}

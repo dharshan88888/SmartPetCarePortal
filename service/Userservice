@@ -1,0 +1,115 @@
+package com.examly.springapp.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import com.examly.springapp.entity.Pet;
+import com.examly.springapp.entity.User;
+import com.examly.springapp.repository.UserRepository;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository Uobj;
+
+    public User addUser(User a) {
+        return Uobj.save(a);
+    }
+    
+    public User saveUser(User user)
+    {
+        for(Pet pets:user.getSpets())
+        {
+            pets.setUser(user);
+        }
+        return Uobj.save(user);
+    }
+    public List<User> addUserList(List<User> productList) {
+        return Uobj.saveAll(productList);
+    }
+
+    public List<User> sort(String field) {
+        Sort sort = Sort.by(Sort.Direction.ASC, field);
+        return Uobj.findAll(sort);
+    }
+
+    public List<User> page(int pagesize, int pageno) {
+        Pageable pageable = PageRequest.of(pageno, pagesize);
+        return Uobj.findAll(pageable).getContent();
+    }
+    public List<User> pagesort(int pageSize,int pageNumber,String field)
+    {
+        return Uobj.findAll(PageRequest.of(pageNumber, pageSize).
+        withSort(Sort.by(Sort.Direction.ASC,field))).getContent();
+    }
+    
+    public List<User>getAllUsers()
+    {
+        return Uobj.findAll();
+    }
+    public User getUserByName(String username)
+    {
+        return Uobj.findByUsername(username);
+    }
+    public User getUser(int id) {
+        return Uobj.findById(id).orElse(null);
+    }
+
+
+
+    public void insertUser(int id, String username, String email, String password, String roles, String adop, String review) {
+        Uobj.insertUser(id, username, email, password, roles, adop, review);
+    }
+    public User editUser(int id, User updateUser) {
+        User existUser = Uobj.findById(id).orElse(null);
+        if (existUser != null) {
+            existUser.setUsername(updateUser.getUsername());
+            existUser.setEmail(updateUser.getEmail());
+            existUser.setPassword(updateUser.getPassword());
+            existUser.setRoles(updateUser.getRoles());
+            existUser.setAdop(updateUser.getAdop());
+            existUser.setReview(updateUser.getReview());
+            return Uobj.save(existUser);
+        }
+        return null;
+    }
+
+    public boolean deleteUser(int id) {
+        if (Uobj.existsById(id)) {
+            Uobj.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
+   
+    
+    public String updateUser(int id, String username, String email, String roles, String adop, String review) {
+        Optional<User> optionalUser = Uobj.findById(id);
+
+        if (optionalUser.isPresent()) {
+            int rowsUpdated = Uobj.updatesUser(id, username, email, roles, adop, review);
+            if (rowsUpdated > 0) {
+                return "User updated successfully!";
+            }
+        }
+        return "User not found";
+    }
+
+
+    public String deleteUserById(int id) {
+        int rowsDeleted = Uobj.deleteUserById(id);
+        if (rowsDeleted > 0) {
+            return "User deleted successfully!";
+        } else {
+            return "User not found";
+        }
+    }
+}

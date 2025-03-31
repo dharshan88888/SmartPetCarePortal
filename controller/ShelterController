@@ -1,0 +1,102 @@
+package com.examly.springapp.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import com.examly.springapp.entity.Shelter;
+import com.examly.springapp.service.ShelterService;
+
+
+
+@RestController
+public class ShelterController {
+    @Autowired
+    ShelterService ob;
+   @PostMapping("/shelterpost")
+    public ResponseEntity<Shelter>addShelter(@RequestBody Shelter a)
+    {
+        return new ResponseEntity<>(ob.addShelter(a),HttpStatus.CREATED);
+    }
+    @PostMapping("/postshelterdata")
+    public ResponseEntity<List<Shelter>>addShelterList(@RequestBody List<Shelter>shelterlist)
+    {
+        List<Shelter>shelters=ob.addShelterList(shelterlist);
+        return new ResponseEntity<>(shelters,HttpStatus.CREATED);
+    }
+    @GetMapping("/getbysheid/{id}")
+    public ResponseEntity<Shelter>getShelter(@PathVariable int id)
+    {
+        Shelter she=ob.getShelter(id);
+        if(she!=null){
+        return new ResponseEntity<>(she,HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+    @GetMapping("/page/Shelter/{field}")
+    public ResponseEntity<List<Shelter>>sortShelter(@PathVariable String field)
+    {
+        List<Shelter>sortedShelter=ob.sort(field);
+        return new ResponseEntity<>(sortedShelter,HttpStatus.OK);
+    }
+    
+    @GetMapping("/page/Shelter/{pageno}/{pageszie}")
+    public ResponseEntity<List<Shelter>>getShelterPaginated(@PathVariable int pageno,@PathVariable int pagesize)
+    {
+        List<Shelter>paginatedShelter=ob.page(pagesize,pageno);
+        return new ResponseEntity<>(paginatedShelter,HttpStatus.OK);
+    }
+    
+    @GetMapping("/page/Pet/{pageno}/{pagesize}/sort/{field}")
+  public ResponseEntity<List<Shelter>> getPetPaginatedSorted(@PathVariable int pageno, @PathVariable int pagesize, @PathVariable String field) {
+    List<Shelter> sortedPaginatedPet = ob.pagesort(pagesize, pageno, field);
+    return new ResponseEntity<>(sortedPaginatedPet, HttpStatus.OK);
+  }
+
+  @GetMapping("/shelter")
+  public List<Shelter>getAllShelters()
+  {
+    return ob.getAllShelters();
+  }
+   @GetMapping("/getShelterByName/{name}")
+   public Shelter getShelterByName(@PathVariable String name)
+   {
+      return ob.getShelterByName(name);
+   }
+
+
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<Shelter>editShelter(@PathVariable int id,@RequestBody Shelter us)
+    {
+            Shelter she=ob.editShelter(id,us);
+            if(she!=null)
+            {
+                return new ResponseEntity<>(she,HttpStatus.NO_CONTENT);
+            }
+            else{
+                return new ResponseEntity<>(she,HttpStatus.NOT_FOUND);
+            }
+    }
+    @DeleteMapping("/delbyid/{id}")
+    public ResponseEntity<Shelter>delShelter(@PathVariable int id)
+    {
+        boolean isDel=ob.delShelter(id);
+        if(isDel)
+        {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+}

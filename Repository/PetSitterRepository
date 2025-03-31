@@ -1,0 +1,35 @@
+package com.examly.springapp.repository;
+
+import java.util.List;
+
+import javax.transaction.Transactional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import com.examly.springapp.entity.PetSitter;
+
+@Repository
+public interface PetSitterRepository extends JpaRepository<PetSitter,Integer>{
+
+    @Query("SELECT p FROM PetSitter p WHERE p.id = : id")
+    PetSitter getPetSitter(@Param("id") int id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO PetSitter (id, name, experience, review, avail) VALUES (?1, ?2, ?3, ?4, ?5)", nativeQuery = true)
+    void addPetSitter(int id, String name, String experience, String review, boolean avail);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE PetSitter p SET p.name = ?2, p.experience = ?3, p.review = ?4, p.avail = ?5 WHERE p.id = ?1")
+    int updatePetSitter(int id, String name, String experience, String review, boolean avail);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM PetSitter p WHERE p.id = ?1")
+    int delPetSitter(int id);
+}

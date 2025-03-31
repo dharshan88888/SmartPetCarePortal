@@ -1,0 +1,93 @@
+package com.examly.springapp.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import com.examly.springapp.entity.HealthRecord;
+import com.examly.springapp.entity.Pet;
+import com.examly.springapp.entity.Shelter;
+import com.examly.springapp.repository.ShelterRepository;
+
+@Service
+public class ShelterService
+{
+    @Autowired
+    ShelterRepository sobj;
+    
+    public Shelter saveShelter(Shelter shelter)
+    {
+        for(Pet pets:shelter.getPets())
+        {
+            pets.setShelter(shelter);;
+        }
+        return sobj.save(shelter);
+    }
+    
+    public Shelter addShelter(Shelter a)
+    {
+       return sobj.save(a);
+    }
+    public List<Shelter>addShelterList(List<Shelter>shelterlist)
+    {
+        return sobj.saveAll(shelterlist);
+    }
+    public List<Shelter>sort(String field)
+    {
+       Sort sort = Sort.by(Sort.Direction.ASC,field); 
+        return sobj.findAll(sort);
+    }
+    public List<Shelter>page(int pagesize,int pageno)
+    {
+        Pageable page= PageRequest.of(pageno, pagesize);
+        return sobj.findAll(page).getContent();
+    }
+    public List<Shelter>pagesort(int pagesize,int pageno,String field)
+    {
+        return sobj.findAll(PageRequest.of(pageno, pagesize).
+        withSort(Sort.by(Sort.Direction.ASC,field))).getContent();
+    }
+    public List<Shelter>getAllShelters()
+    {
+        return sobj.findAll();
+    }
+    public Shelter getShelterByName(String name)
+    {
+        return sobj.findByName(name);
+    }
+    public Shelter getShelter(int id)
+    {
+        return sobj.findById(id).orElse(null);
+    }
+    public Shelter editShelter(int id,Shelter us)
+    {
+        Shelter shelter = sobj.findById(id).orElse(null);
+        if(shelter!=null)
+        {
+            shelter.setId(us.getId());
+            shelter.setName(us.getName());
+            shelter.setEmail(us.getEmail());
+            shelter.setAddress(us.getAddress());
+            // shelter.setPets(us.getPets());
+            shelter.setPhoneNo(us.getPhoneNo());
+            return sobj.save(shelter);
+        }
+        else{
+            return null;
+        }
+    }
+    public boolean delShelter(int id)
+    {
+         if(sobj.existsById(id)){
+             sobj.deleteById(id);
+             return true;
+         }
+         else{
+            return false;
+         }
+    }
+}

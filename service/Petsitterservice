@@ -1,0 +1,62 @@
+package com.examly.springapp.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.examly.springapp.entity.PetSitter;
+import com.examly.springapp.repository.PetSitterRepository;
+
+@Service
+public class PetsitterService {
+
+    @Autowired
+    PetSitterRepository psobj;
+    public PetSitter addSitter(PetSitter a)
+    {
+        return  psobj.save(a);
+    }
+    public List<PetSitter> addAllSitter(List<PetSitter>SitterList)
+    {  
+        return psobj.saveAll(SitterList);
+    }
+    public PetSitter getSitter(int id)
+    {
+        return psobj.findById(id).orElse(null);
+    }
+    public List<PetSitter> getAllSitter()
+    {
+        return psobj.findAll();
+    }
+   
+    public PetSitter getPetSitter(int id)
+    {
+        return psobj.findById(id).orElse(null);
+    }
+   public PetSitter editPetSitter(int id,PetSitter updatedPetSitter)
+   {
+       PetSitter sitter= psobj.findById(id).orElse(null);
+       if(sitter!=null)
+       {
+        sitter.setId(updatedPetSitter.getId());
+        sitter.setName(updatedPetSitter.getName());
+        sitter.setAvail(updatedPetSitter.isAvail());
+        sitter.setExperience(updatedPetSitter.getExperience());
+        sitter.setReview(updatedPetSitter.getReview());
+        return psobj.save(sitter);
+       }
+       else{
+        return null;
+       }
+
+   }
+   public boolean delPetSitter(int id)
+   {
+      if(psobj.existsById(id))
+      {
+        psobj.deleteById(id);
+        return true;
+      }
+      return false;
+   }
+}

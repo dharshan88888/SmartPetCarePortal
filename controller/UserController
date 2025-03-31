@@ -1,0 +1,145 @@
+package com.examly.springapp.controller;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import com.examly.springapp.entity.User;
+import com.examly.springapp.service.UserService;
+
+@RestController
+public class UserController{
+    @Autowired
+    UserService ob1;
+    @PostMapping("/userpost")
+    public ResponseEntity<User>addUser(@RequestBody User a)
+    {
+        return new ResponseEntity<>(ob1.addUser(a),HttpStatus.CREATED);
+    }
+    @PostMapping("/listpostUser")
+    public ResponseEntity<List<User>>addUserList(@RequestBody List<User>producList)
+    {
+        List<User>savedUsers=ob1.addUserList(producList);
+        return new ResponseEntity<>(savedUsers,HttpStatus.CREATED);
+    }
+    
+    @GetMapping("/getUser")
+    public ResponseEntity<List<User>>getAllUser()
+    {
+        List<User>users=ob1.getAllUsers();
+        return new ResponseEntity<>(users,HttpStatus.OK);
+    }
+
+    @GetMapping("/getUserByName/{username}")
+    public ResponseEntity<User>getUserByName(@PathVariable String username)
+    {
+        User user = ob1.getUserByName(username);
+        if(user!=null)
+        {
+            return new ResponseEntity<>(user,HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+    @GetMapping("/getuserbyid/{id}")
+    public ResponseEntity<User>getUser(@PathVariable int id)
+    {
+        User pro = ob1.getUser(id);
+        if(pro!=null)
+        {
+            return new ResponseEntity<>(pro,HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+    @GetMapping("/sort/{field}")
+    public ResponseEntity<List<User>> sortUsers(@PathVariable String field) {
+        List<User> sortedUsers = ob1.sort(field);
+        return new ResponseEntity<>(sortedUsers, HttpStatus.OK);
+    }
+  
+    @GetMapping("/page/{offset}/{pagesize}")
+    public ResponseEntity<List<User>> getUsersPaginated(@PathVariable int offset, @PathVariable int pagesize) {
+        List<User> paginatedUsers = ob1.page(offset, pagesize);
+        return new ResponseEntity<>(paginatedUsers, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/page/{offset}/{pagesize}/sort/{field}")
+    public ResponseEntity<List<User>> getUsersPaginatedSorted(
+            @PathVariable int offset, @PathVariable int pagesize, @PathVariable String field) {
+        List<User> sortedPaginatedUsers = ob1.pagesort(offset, pagesize, field);
+        return new ResponseEntity<>(sortedPaginatedUsers, HttpStatus.OK);
+    }
+
+    @PutMapping("/putuserbyid/{id}")
+    public ResponseEntity<User>editUser(@PathVariable int id, @RequestBody User update)
+    {
+        User pro=ob1.editUser(id,update);
+        if(pro!=null)
+        {
+            return new ResponseEntity<>(pro,HttpStatus.OK);
+        }
+        else
+        {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+    }
+    @DeleteMapping("/deluserby/{id}")
+    public ResponseEntity<Void>deleteUser(@PathVariable int id)
+    {
+        boolean isDel=ob1.deleteUser(id);
+        if(isDel)
+        {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        else
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+    @PostMapping("/insert")
+    public ResponseEntity<String> insertUser(@RequestBody User user) {
+        ob1.insertUser(user.getId(), user.getUsername(), user.getEmail(), 
+                               user.getPassword(), user.getRoles(), user.getAdop(), user.getReview());
+        return new ResponseEntity<>( HttpStatus.CREATED);
+    } 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updateUser(
+            @PathVariable int id,
+            @RequestBody User user) {
+
+        String result = ob1.updateUser(
+                id,
+                user.getUsername(),
+                user.getEmail(),
+                user.getRoles(),
+                user.getAdop(),
+                user.getReview()
+        );
+
+       return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/User/{id}")
+    public ResponseEntity<String> deleteUserById(@PathVariable int id) {
+        String result = ob1.deleteUserById(id);
+        
+        if (result.equals("User deleted successfully!")) {
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+        }
+    }
+   
+}

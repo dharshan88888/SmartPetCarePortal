@@ -1,0 +1,96 @@
+package com.examly.springapp.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import com.examly.springapp.entity.Appointment;
+import com.examly.springapp.service.AppointmentService;
+
+@RestController
+public class AppointmentController {
+    @Autowired
+    AppointmentService ob;
+    @PostMapping("/post/Appointment")
+    public ResponseEntity<Appointment> postAppointment(@RequestBody Appointment a)
+    {
+        return new ResponseEntity<>(ob.addAppointment(a),HttpStatus.OK);
+    }
+
+    @PostMapping("/postlist/Appointment")
+    public ResponseEntity<List<Appointment>>addAllAppointments(@RequestBody List<Appointment>a)
+    {
+        return new ResponseEntity<>(ob.addAllAppointments(a),HttpStatus.OK);
+    }
+
+     @GetMapping("/getAllAppointment")
+     public ResponseEntity<List<Appointment>>getAllAppointment(@RequestBody List<Appointment>a)
+     {
+        return new ResponseEntity<>(ob.getAllAppointment(),HttpStatus.CREATED);
+     }
+    @GetMapping("/getbyappointid/{id}")
+    public ResponseEntity<Appointment> getAppointment(@PathVariable int id)
+    {
+        Appointment appo=ob.getAppointment(id);
+        if(appo!=null)
+        {
+            return new ResponseEntity<>(appo,HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(appo,HttpStatus.NOT_FOUND);
+        }
+    }
+    @GetMapping("/sort/Appointment/{field}")
+    public ResponseEntity<List<Appointment>> sort(@PathVariable String field) {
+        List<Appointment> sortAppointment = ob.sort(field);
+        return new ResponseEntity<>(sortAppointment, HttpStatus.OK);
+    }
+
+    @GetMapping("/page/Appointment/{pageno}/{pagesize}")
+    public ResponseEntity<List<Appointment>> getShelterPaginated(@PathVariable int pageno, @PathVariable int pagesize) {
+        List<Appointment> paginatedShelter = ob.page(pagesize, pageno);
+        return new ResponseEntity<>(paginatedShelter, HttpStatus.OK);
+    }
+
+    @GetMapping("/page/Appointment/{pageno}/{pagesize}/sort/{field}")
+    public ResponseEntity<List<Appointment>> getAppPaginatedSorted(@PathVariable int pageno, @PathVariable int pagesize, @PathVariable String field) {
+        List<Appointment> sortedPaginatedShelter = ob.pagesort(pagesize, pageno, field);
+        return new ResponseEntity<>(sortedPaginatedShelter, HttpStatus.OK);
+    }
+
+   
+    
+
+    @PutMapping("/put/Appointment/{id}")
+    public ResponseEntity<Appointment> editAppointment(@PathVariable int id,@RequestBody Appointment a)
+    {
+        Appointment appo=ob.editAppointment(id,a);
+        if(appo!=null)
+        {
+            return new ResponseEntity<>(appo,HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void>delAppointment(@PathVariable int id)
+    {
+        boolean isDel =ob.delAppointment(id);
+        if(isDel)
+        {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+}

@@ -1,0 +1,40 @@
+package com.examly.springapp.repository;
+
+import java.util.List;
+
+import javax.transaction.Transactional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import com.examly.springapp.entity.User;
+
+@Repository
+public interface UserRepository extends JpaRepository<User,Integer>{
+@Query("SELECT p FROM User p")
+List<User>getAllUsers();
+
+@Query("SELECT p FROM User p WHERE p.username  = :username")
+ User findByUsername(@Param("username") String username);
+
+@Modifying
+@Transactional
+@Query(value = "INSERT INTO user (id, username, email, password, roles, adop, review) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)", nativeQuery = true)
+    void insertUser(int id, String username, String email, String password, String roles, String adop, String review); 
+
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE User u SET u.username = ?2, u.email = ?3, u.roles = ?4, u.adop = ?5, u.review = ?6 WHERE u.id = ?1")
+    int updatesUser(int id, String username, String email, String roles, String adop, String review);
+
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM User u WHERE u.id = ?1")
+    int deleteUserById(int id);
+    
+}

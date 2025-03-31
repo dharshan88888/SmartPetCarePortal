@@ -1,0 +1,89 @@
+package com.examly.springapp.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.examly.springapp.entity.Pet;
+import com.examly.springapp.service.PetService;
+
+
+
+@RestController
+public class PetController {
+  @Autowired
+  PetService ob;
+  @PostMapping("/petpost")
+  public ResponseEntity<Pet>addPet(@RequestBody Pet a)
+  {
+    return new ResponseEntity<>(ob.addPet(a),HttpStatus.CREATED);
+  }
+   @PostMapping("/petlist")
+ public ResponseEntity<List<Pet>>addPetList(@RequestBody List<Pet>petList)
+ {
+    List<Pet>savePet=ob.addPetList(petList);
+    return new ResponseEntity<>(savePet,HttpStatus.CREATED);
+ }
+  @GetMapping("/getpetby/{id}")
+  public ResponseEntity<Pet>getPet(@PathVariable int id)
+  {
+    Pet pet=ob.getPet(id);
+    if(pet!=null){
+    return new ResponseEntity<>(pet,HttpStatus.OK);
+    }
+    else{
+        return new ResponseEntity<>(pet,HttpStatus.NOT_FOUND);
+    }
+}
+@GetMapping("/sort/Pet/{field}")
+public ResponseEntity<List<Pet>>sortPet(@PathVariable String field)
+{
+  List<Pet>sortedPet=ob.sort(field);
+  return new ResponseEntity<>(sortedPet,HttpStatus.OK);
+}
+@GetMapping("/page/Pet/sort/{offset}/{pagesize}")
+public ResponseEntity<List<Pet>>getPetPaginated(@PathVariable int offset,@PathVariable int pagesize)
+{
+  List<Pet>paginatedPet =ob.page(offset, pagesize);
+  return new ResponseEntity<>(paginatedPet,HttpStatus.OK);
+}
+@GetMapping("/page/Pet/{offset}/{pagesize}/{field}")
+public ResponseEntity<List<Pet>>getPetPaginatedSorted(@PathVariable int offset,@PathVariable int pagesize,@PathVariable String field)
+{
+  List<Pet>sortedPaginatedPet=ob.pagesort(offset, pagesize, field);
+  return new ResponseEntity<>(sortedPaginatedPet,HttpStatus.OK);
+}
+@PutMapping("/updatepetby/{id}")
+public ResponseEntity<Pet>editPet(@PathVariable int id,@RequestBody Pet updatePet)
+{
+  Pet pet=ob.editPet(id,updatePet);
+  if(pet!=null){
+  return new ResponseEntity<>(pet,HttpStatus.OK);
+  }
+  else{
+      return new ResponseEntity<>(pet,HttpStatus.NOT_FOUND);
+  }
+}
+   @DeleteMapping("/deletepet/{id}")
+     public ResponseEntity<Void>delPet(@PathVariable int  id) 
+     {
+      boolean isDeleted=ob.delPet(id);
+      if(isDeleted)
+      {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+      }
+      else
+      {
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+      }
+     }     
+}

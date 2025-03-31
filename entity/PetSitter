@@ -1,0 +1,73 @@
+package com.examly.springapp.entity;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table
+public class PetSitter {
+    @Id
+    int id;
+    String name;
+    String experience;
+    String review;
+    boolean avail;
+
+
+    @OneToOne(mappedBy="petsitter")
+    private User user;
+    
+    
+
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getExperience() {
+        return experience;
+    }
+    public void setExperience(String experience) {
+        this.experience = experience;
+    }
+    public String getReview() {
+        return review;
+    }
+    public void setReview(String review) {
+        this.review = review;
+    }
+    public boolean isAvail() {
+        return avail;
+    }
+    public void setAvail(boolean avail) {
+        this.avail = avail;
+    }
+    public PetSitter(int id, String name, String experience, String review, boolean avail,User user) {
+        this.id = id;
+        this.name = name;
+        this.experience = experience;
+        this.review = review;
+        this.avail = avail;
+        this.user=user;
+    }
+    public PetSitter() {
+    }
+    
+    
+}

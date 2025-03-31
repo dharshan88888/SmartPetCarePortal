@@ -1,0 +1,92 @@
+package com.examly.springapp.controller;
+
+import java.util.List;
+
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.examly.springapp.entity.HealthRecord;
+
+import com.examly.springapp.service.HealthRecordService;
+
+
+
+@RestController
+public class HealthRecordController{
+@Autowired
+ HealthRecordService ob;
+ @PostMapping("/healthpost")
+ public ResponseEntity<HealthRecord>addRecord(@RequestBody HealthRecord a)
+ {
+    return new ResponseEntity<>(ob.addRecord(a),HttpStatus.CREATED);
+ }
+ @PostMapping("/posthealthlist")
+ public ResponseEntity<List<HealthRecord>>addhealthlist(@RequestBody List<HealthRecord>addhealth)
+ {
+    List<HealthRecord>health=ob.addhealthlist(addhealth);
+    return new ResponseEntity<>(health,HttpStatus.CREATED);
+ }
+ @GetMapping("/getbyhealthid/{id}")
+ public ResponseEntity<HealthRecord>getRecord(@PathVariable int id)
+ {
+    HealthRecord he=ob.getRecord(id);
+    if(he!=null)
+    {
+        return new ResponseEntity<>(he,HttpStatus.OK);
+    }
+    else{
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+ }
+ @GetMapping("/sort/HealthRecord/{field}")
+    public ResponseEntity<List<HealthRecord>> sortShelter(@PathVariable String field) {
+        List<HealthRecord> sortedShelter = ob.sort(field);
+        return new ResponseEntity<>(sortedShelter, HttpStatus.OK);
+    }
+    @GetMapping("/page/HealthRecord/{pageno}/{pagesize}")
+    public ResponseEntity<List<HealthRecord>> getShelterPaginated(@PathVariable int pageno, @PathVariable int pagesize) {
+        List<HealthRecord> paginatedShelter = ob.page(pagesize, pageno);
+        return new ResponseEntity<>(paginatedShelter, HttpStatus.OK);
+    }
+
+    @GetMapping("/page/HealthRecord/{pageno}/{pagesize}/{field}")
+    public ResponseEntity<List<HealthRecord>> getShelterPaginatedSorted(@PathVariable int pageno, @PathVariable int pagesize, @PathVariable String field) {
+        List<HealthRecord> sortedPaginatedShelter = ob.pagesort(pagesize, pageno, field);
+        return new ResponseEntity<>(sortedPaginatedShelter, HttpStatus.OK);
+    }
+
+ @PutMapping("/healthputby/{id}")
+ public ResponseEntity<HealthRecord>editRecord(@PathVariable int id,@RequestBody HealthRecord updateRecord)
+ {
+    HealthRecord he=ob.editRecord(id, updateRecord);
+    if(he!=null)
+    {
+        return new ResponseEntity<>(he,HttpStatus.OK);
+    }
+    else{
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+ }
+ @DeleteMapping("/delby/{id}")
+ public ResponseEntity<HealthRecord>delRec(@PathVariable int id)
+ {
+    boolean isDel=ob.delRec(id);
+    if(isDel)
+    {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    else{
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+ }
+}

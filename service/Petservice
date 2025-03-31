@@ -1,0 +1,94 @@
+package com.examly.springapp.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import com.examly.springapp.controller.AdoptionController;
+import com.examly.springapp.entity.HealthRecord;
+import com.examly.springapp.entity.Pet;
+import com.examly.springapp.entity.Shelter;
+import com.examly.springapp.repository.PetRepository;
+
+@Service
+public class PetService
+{
+
+    private final AdoptionController adoptionController;
+    @Autowired
+    PetRepository Pobj;
+
+    PetService(AdoptionController adoptionController) {
+        this.adoptionController = adoptionController;
+    }
+    public Pet addPet(Pet a)
+    {
+        return Pobj.save(a);
+    }
+    public List<Pet>addPetList(List<Pet>petList)
+    {
+        return Pobj.saveAll(petList);
+    }
+     public List<Pet> sort(String field) {
+        Sort sort = Sort.by(Sort.Direction.ASC, field);
+        return Pobj.findAll(sort);
+    }
+    public Pet savePet(Pet pet)
+    {
+        for(HealthRecord healthRecord:pet.getHealthRecord())
+        {
+            healthRecord.setPet(pet);
+        }
+        return Pobj.save(pet);
+    }
+    public List<Pet> page(int pagesize, int pageno) {
+        Pageable pageable = PageRequest.of(pageno, pagesize);
+        return Pobj.findAll(pageable).getContent();
+    }
+    public List<Pet> pagesort(int pageSize,int pageNumber,String field)
+    {
+        return Pobj.findAll(PageRequest.of(pageNumber, pageSize).
+        withSort(Sort.by(Sort.Direction.ASC,field))).getContent();
+    }
+    public List<Pet>getAllPets()
+    {
+        return Pobj.findAll();
+    }
+    public Pet getPet(int id)
+    {
+        return Pobj.findById(id).orElse(null);
+    }
+    public Pet editPet(int id,Pet updatePet)
+    {
+        Pet existPet=Pobj.findById(id).orElse(null);
+        if(existPet!=null)
+        {
+            existPet.setId(updatePet.getId());
+            existPet.setName(updatePet.getName());
+            existPet.setAge(updatePet.getAge());
+            existPet.setBreed(updatePet.getBreed());
+            existPet.setSpecies(updatePet.getSpecies());
+            existPet.setAdopStatus(updatePet.getAdopStatus());
+            existPet.setHealthSt(updatePet.getHealthSt());
+            existPet.setReview(updatePet.getReview());
+            existPet.setTemp(updatePet.getTemp());
+            return Pobj.save(existPet);  
+        }
+        else{
+            return null;
+        }
+    }
+
+    public boolean delPet(int id)
+    {
+        if(Pobj.existsById(id))
+        {
+            Pobj.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+}
